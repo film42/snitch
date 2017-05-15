@@ -8,6 +8,7 @@ import (
 	"strings"
 )
 
+var errorRate float64
 var checkHostService *CheckHostService
 var checkProcessService *CheckProcessService
 
@@ -19,7 +20,7 @@ func healthCheckHandler(w http.ResponseWriter, r *http.Request) {
 
 	successRate := checkHostService.SuccessRate()
 	fmt.Println("HEALTH CHECK - Current host success rate:", successRate)
-	if successRate <= 0.7 {
+	if successRate <= errorRate {
 		fmt.Println("Error rate:", successRate)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
@@ -27,7 +28,7 @@ func healthCheckHandler(w http.ResponseWriter, r *http.Request) {
 
 	successRate = checkProcessService.SuccessRate()
 	fmt.Println("HEALTH CHECK - Current process success rate:", successRate)
-	if successRate <= 0.7 {
+	if successRate <= errorRate {
 		fmt.Println("Error rate:", successRate)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
@@ -54,6 +55,7 @@ func main() {
 	flag.Var(&checkHosts, "check", "List of host:port combos to check. Example: --check localhost:1234 --check localhost:3422")
 	flag.Var(&processes, "process", "List of process substring to check. Example: --process sidekiq --process puma")
 	portPtr := flag.Int("port", 9999, "Port to listen on")
+	errorRatePointer := flag.Float64("error-rate", 0.7, "Rate at which snitch begins to respond with a 500 error")
 	flag.Parse()
 
 	if len(checkHosts) == 0 && len(processes) == 0 {
@@ -61,6 +63,8 @@ func main() {
 		flag.PrintDefaults()
 		return
 	}
+
+	errorRate = *errorRatePointer
 
 	checkHostService = NewCheckHostService(checkHosts)
 	go checkHostService.Start()

@@ -26,6 +26,8 @@ $ docker run -p 9999:9999 -d film42/snitch:latest --check localhost:3000 --check
 Must provide at least one process or host to check:
   -check value
         List of host:port combos to check. Example: --check localhost:1234 --check localhost:3422
+  -error-rate float
+        Rate at which snitch begins to respond with a 500 error (default 0.7)
   -port int
         Port to listen on (default 9999)
   -process value
