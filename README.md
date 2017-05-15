@@ -20,7 +20,7 @@ Or you can grab the pre-built docker container:
 $ docker run -p 9999:9999 -d film42/snitch:latest --check localhost:3000 --check localhost:3001
 ```
 
-## Docs
+### Usage
 
 ```
 Must provide at least one process or host to check:
@@ -32,4 +32,23 @@ Must provide at least one process or host to check:
         Port to listen on (default 9999)
   -process value
         List of process substring to check. Example: --process sidekiq --process puma
+```
+
+Once you have snitch running, you can make requests to the process at the port you specified. If the number of
+successful checks exceed the error rate, then a `200` response will be returned.
+
+```
+$ curl -v localhost:9999
+...
+< HTTP/1.1 200 OK
+...
+```
+
+If the error rate is exceeded, then snitch will return a `500`.
+
+```
+$ curl -v localhost:9999
+...
+< HTTP/1.1 500 Internal Server Error
+...
 ```
