@@ -5,10 +5,19 @@ An aggregate health checking service. Point snitch at http servers or processes 
 if more than 70% of the checks are passing. Snitch was built to be used with AWS Cloud Watch for monitoring docker
 containers by triggering if a snitch process falls out of a private ELB.
 
-## Running
+### Installing
+
+To build from source you can do:
 
 ```
-$ go get github.com/film42/snitch
+$ go get github.com/film42/turbulence
+$ ./bin/turbulence
+```
+
+Or you can grab the pre-built docker container:
+
+```
+$ docker run -p 9999:9999 -d film42/snitch:latest --check localhost:3000 --check localhost:3001
 ```
 
 ## Docs
